@@ -13,11 +13,13 @@ tasks = [
 
 def get_next_id():
     return max((t["id"] for t in tasks), default=0) + 1
+
 def find_task(task_id: int):
     return next((t for t in tasks if t["id"] == task_id), None)
 
 class TaskCreate(BaseModel):
     title: Optional[str] = None
+
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     done: Optional[bool] = None
@@ -25,9 +27,11 @@ class TaskUpdate(BaseModel):
 @app.get("/", summary="API info")
 def root():
     return {"name": "Task API", "version": "1.0", "endpoints": ["/tasks"]}
+
 @app.get("/health", summary="Health check")
 def health():
     return {"status": "ok"}
+
 @app.get("/tasks", summary="List all tasks")
 def list_tasks(done: Optional[bool] = None, search: Optional[str] = None):
     result = tasks
@@ -36,12 +40,14 @@ def list_tasks(done: Optional[bool] = None, search: Optional[str] = None):
     if search:
         result = [t for t in result if search.lower() in t["title"].lower()]
     return result
+
 @app.get("/tasks/{task_id}", summary="Get single task")
 def get_task(task_id: int):
     task = find_task(task_id)
     if not task:
         return JSONResponse(status_code=404, content={"error": f"Task {task_id} not found"})
     return task
+
 @app.post("/tasks", status_code=201, summary="Create a new task")
 def create_task(payload: TaskCreate):
     if not payload.title or not payload.title.strip():
@@ -49,6 +55,7 @@ def create_task(payload: TaskCreate):
     new_task = {"id": get_next_id(), "title": payload.title.strip(), "done": False}
     tasks.append(new_task)
     return new_task
+
 @app.put("/tasks/{task_id}", summary="Update a task")
 def update_task(task_id: int, payload: TaskUpdate):
     task = find_task(task_id)
@@ -63,6 +70,7 @@ def update_task(task_id: int, payload: TaskUpdate):
     if payload.done is not None:
         task["done"] = payload.done
     return task
+
 @app.delete("/tasks/{task_id}", status_code=204, summary="Delete a task")
 def delete_task(task_id: int):
     task = find_task(task_id)
@@ -70,11 +78,13 @@ def delete_task(task_id: int):
         return JSONResponse(status_code=404, content={"error": f"Task {task_id} not found"})
     tasks.remove(task)
     return Response(status_code=204)
+
 @app.get("/stats", summary="Task stats")
 def get_stats():
     total = len(tasks)
     done_count = sum(1 for t in tasks if t["done"])
     return {"total": total, "done": done_count, "open": total - done_count}
+
 @app.post("/reset", summary="Reset to 3 example tasks")
 def reset_tasks():
     global tasks
