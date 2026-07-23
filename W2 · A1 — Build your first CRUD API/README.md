@@ -6,6 +6,10 @@ A simple CRUD API built with **FastAPI** that manages an in-memory to-do list.
 
 ---
 
+## Swagger UI
+
+![Swagger UI](Screenshots/swagger-ui.png)
+
 ## Features
 
 - ✅ Create tasks
