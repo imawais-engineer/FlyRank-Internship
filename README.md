@@ -38,3 +38,7 @@ Create tasks, restart server (Ctrl+C then uvicorn again), GET /tasks -> tasks go
 
 ## AI vs me
 To be added in Stage 7.
+
+## Real curl output
+```
+```
